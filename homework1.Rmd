@@ -1,0 +1,25 @@
+---
+title: "Homework 1"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+library(knitr)
+knitr::opts_chunk$set(echo = TRUE)
+library(languageR)
+load("~/Desktop/classes/lingc160/Homework 1.RData")
+library(ggplot2)
+library(dplyr)
+```
+
+## Simple regression modeling of F1_data
+
+Define S and Q datasets:
+```{r define s and q}
+
+s = transitions[transitions$dialActA == 'statement',]
+q = transitions[transitions$dialActA == 'yn_q',]
+```
+
+
+## Multiple regression modeling of durationsGe

@@ -1,0 +1,33 @@
+---
+title: "homework4"
+author: "Vivian Du"
+date: "4/24/2020"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+1. Regular Expressions
+a. \\b(be|were|was)\\b\\s\\b([a-z]+)(ed|en)\\b
+
+b. An example that the pattern will find is "were keen" (false positive). This is not correct since the word "keen" is not a verb, but rather an adjective that ends in "en". A false negative would be "were fought", because the word "fight" conjugates to fought in past tense, not "fighted".
+
+2. FSAs and Regular Expressions
+a. 
+![2a FSA diagram](/Users/viviandu/Desktop/classes/lingc160/Untitled_Artwork.png)
+
+b. Regular Expression
+
+Regular expression for the FSA is: 
+
+(ab*cb)+
+
+c. L(FSA) is infinite, because if c occurs in q2, it can lead to q1 which can lead back to q0 (the initial state)
+
+3. FSAs: Chumash phonotactics
+a.
+![3a FSA diagram](/Users/viviandu/Desktop/classes/lingc160/part 2.png)
+
+b.![3a FSA diagram](/Users/viviandu/Desktop/classes/lingc160/part3.png)

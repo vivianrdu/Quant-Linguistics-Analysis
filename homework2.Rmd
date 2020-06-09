@@ -1,0 +1,121 @@
+---
+title: "Homework 2"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+library(knitr)
+knitr::opts_chunk$set(echo = TRUE)
+library(languageR)
+library(ggplot2)
+library(dplyr)
+
+```
+
+## Simple regression modeling of F1_data
+
+Conduct a test whether or not male data is correlated with the female data.
+
+i. I will be using the paired t-test to test to see if the vowel height measurement from men and women. 
+```{r paired t test}
+dataf1 = read.csv("~/Desktop/classes/lingc160/F1_data.csv")
+t.test(dataf1$female, dataf1$male, paired = TRUE)
+```
+Since the p-value is 9.076e-06 and therefore <0.05, we reject the null and conclude that the vowel height measurements for men and women are different.
+
+ii.
+```{r model of men f1}
+lm(male ~ female, dataf1)
+```
+If female F1 were 796, then the male F1 would be 0.7356*796 + 47.5961 = 633.1337.
+
+iii. The predicted male f1 value was lower than the actual. The difference is 678-633.1337, which is about 45. This difference is called the residual.
+
+iv.
+```{r sum of the residuals}
+
+sum(dataf1$male - (dataf1$female*0.7356 + 47.5961)) 
+```
+The sum of the residuals is about 0. This is because each residual is the predicted - expected, and the linear regression minimizes the residual values to 0 (which is only true in the case that the formula has an intercept and in this case it does).
+
+
+## Multiple regression modeling of durationsGe
+```{r duration}
+sub = durationsGe[!is.na(durationsGe$Sex),]
+durations = sub
+
+```
+i. The subject's rate of speech during the utterance would be predictive of the duration. This is because the rate of speech is directly related to how long the prefix is spoken for. The faster the rate of speech the shorter the duration and vise versa.
+
+ii. 
+```{r speech rate}
+ggplot(durations, aes(SpeechRate, DurationOfPrefix)) + geom_point(size=0.5) +geom_smooth(method="lm")
+```
+
+The line suggests that there is a negative correlation between speech rate and duration of the prefix. The faster the speech rate, the shorter the duration of the prefix. This is likely due to the fact that if a person's speech rate is generally faster, the time taken to say words would be faster, hence the duration of the prefix would be lower.
+
+
+iii.
+```{r summary of all predictors}
+predictor = lm(DurationOfPrefix~ SpeechRate + Sex + Frequency + NumberSegmentsOnset , durations)
+
+summary(predictor)
+```
+
+iv. The sign of the coefficient for speech rate is negative. This corresponds to the slope/general trend of the point plot from before, which was also negative.
+
+v. Sexmale is coded from the "Sex" categorical variable. Due to the non-numerical quality, the calculation was likely done by coding "male" as 1 and "female" as 0. In this case, the Sexmale coefficient is negative, which means that when the data was male there was a negative trend for the duration of the prefix.
+
+vi.
+
+I started out by making four models, the first one starting with 4 predictors.
+```{r predictor m1}
+m1 = lm(DurationOfPrefix~ SpeechRate + Sex + Frequency + NumberSegmentsOnset , durations)
+
+summary(m1)
+```
+
+Since Sexmale had a p-value > 0.05, this was removed.
+```{r predictor m2}
+m2 = lm(DurationOfPrefix~ SpeechRate + Frequency + NumberSegmentsOnset, durations)
+
+summary(m2)
+```
+
+Since the NumberSegmentsOnset had a p-value > 0.05, this was removed.
+```{r predictor m3}
+m3 = lm(DurationOfPrefix~ SpeechRate + Frequency, durations)
+
+summary(m3)
+```
+
+All predictors now have a p-value < 0.05.
+
+I then ran AIC and BIC to see which test preferred which model the most.
+```{r tests}
+
+AIC(m1, m2, m3)
+BIC(m1, m2, m3)
+
+```
+
+Our information criteria do differ with respect to what model they ultimately prefer. AIC prefers m2, while BIC prefers m3. This may be because BIC prefers more parsimonious models than AIC.(BIC prefers simpler models while AIC models closer to reality with more complex predictors)
+
+vii.
+
+```{r new model }
+
+m4 = lm(DurationOfPrefix~ SpeechRate + Frequency + (Sex*NumberSegmentsOnset), durations)
+
+summary(m4)
+```
+
+In this case, we can use an F-test to compare the models with and without the additional term. This is because this is the only term that makes the two models different, and m3 would be nested under m4.
+
+```{r f test }
+
+anova(m3, m4)
+
+```
+
+According to the F-test, adding the predictor of the two other predictor interaction term does not affect the DurationOfPrefix beyond the predictors SpeechRate and Frequency.This is because the p-value of the F test is > 0.05 (0.1927 > 0.05). 
